@@ -8,9 +8,9 @@ import isIPFS from 'is-ipfs';
 import { Signer } from '@ethersproject/abstract-signer';
 
 const {
-  AAVE_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
-  AAVE_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c', // mainnet
-  AAVE_SHORT_EXECUTOR = '0xee56e2b3d491590b5b31738cc34d5232f378a8d5', // mainnet
+  AAVE_TOKEN = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7',
+  AAVE_GOVERNANCE_V2 = '0x3515F2b1Cc5E13a0A8AE89BF5B313D442B36aA66', // mainnet
+  AAVE_SHORT_EXECUTOR = '0x3162c8729602EF828C3608459bF178FaA93B0d0e', // mainnet
 } = process.env;
 
 task('incentives-submit-proposal:mainnet', 'Submit the incentives proposal to Aave Governance')
@@ -35,12 +35,12 @@ task('incentives-submit-proposal:mainnet', 'Submit the incentives proposal to Aa
         );
       }
 
-      if (aTokens.split(',').length !== 6) {
-        throw new Error('aTokens input param should have 6 elements');
+      if (aTokens.split(',').length !== 3) {
+        throw new Error('aTokens input param should have 3 elements');
       }
 
-      if (variableDebtTokens.split(',').length !== 6) {
-        throw new Error('variable debt token param should have 6 elements');
+      if (variableDebtTokens.split(',').length !== 3) {
+        throw new Error('variable debt token param should have 3 elements');
       }
 
       const proposerAddress = await proposer.getAddress();

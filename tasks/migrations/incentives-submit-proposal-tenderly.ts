@@ -9,9 +9,9 @@ import { Signer } from '@ethersproject/abstract-signer';
 import { logError } from '../../helpers/tenderly-utils';
 
 const {
-  AAVE_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
-  AAVE_GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c', // mainnet
-  AAVE_SHORT_EXECUTOR = '0xee56e2b3d491590b5b31738cc34d5232f378a8d5', // mainnet
+  AAVE_TOKEN = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7',
+  AAVE_GOVERNANCE_V2 = '0x3515F2b1Cc5E13a0A8AE89BF5B313D442B36aA66', // mainnet
+  AAVE_SHORT_EXECUTOR = '0x3162c8729602EF828C3608459bF178FaA93B0d0e', // mainnet
 } = process.env;
 const VOTING_DURATION = 19200;
 

@@ -19,50 +19,42 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
   using SafeMath for uint256;
   using PercentageMath for uint256;
 
-  address constant AAVE_TOKEN = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
-  address constant POOL_CONFIGURATOR = 0x311Bb771e4F8952E6Da169b425E7e92d6Ac45756;
-  address constant ADDRESSES_PROVIDER = 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5;
-  address constant LENDING_POOL = 0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9;
-  address constant ECO_RESERVE_ADDRESS = 0x1E506cbb6721B83B1549fa1558332381Ffa61A93;
-  address constant INCENTIVES_CONTROLLER_PROXY_ADDRESS = 0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5;
-  address constant INCENTIVES_CONTROLLER_IMPL_ADDRESS = 0x83D055D382f25e6793099713505c68a5C7535a35;
+  address constant AAVE_TOKEN = 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7;
+  address constant POOL_CONFIGURATOR = 0x5Dda19AC38b19788A7842819d6673034006090E1;
+  address constant ADDRESSES_PROVIDER = 0x17F701D30487b0D718772449f3468C05Be61258f;
+  address constant LENDING_POOL = 0x779c46e29fE0C081cb0b90AC4e3b5D06153A9B62;
+  address constant ECO_RESERVE_ADDRESS = 0x5Dda19AC38b19788A7842819d6673034006090E1;//TODO
+  address constant INCENTIVES_CONTROLLER_PROXY_ADDRESS = 0x7900fE24B4d10007D3295301FE9E87345BCcA509;
+  address constant INCENTIVES_CONTROLLER_IMPL_ADDRESS = 0xdfd288C40119584FB45F7053Cb384c885A6832a5;
 
   uint256 constant DISTRIBUTION_DURATION = 7776000; // 90 days
-  uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 AAVE during 90 days
-
+  // uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 AAVE during 90 days
+  uint256 constant DISTRIBUTION_AMOUNT = 10*(10**18); // 10TTC4 testToken during 90 days
+  
   function execute(
-    address[6] memory aTokenImplementations,
-    address[6] memory variableDebtImplementations
+    address[3] memory aTokenImplementations,
+    address[3] memory variableDebtImplementations
   ) external override {
     uint256 tokensCounter;
 
-    address[] memory assets = new address[](12);
+    address[] memory assets = new address[](6);
 
-    // Reserves Order: DAI/GUSD/USDC/USDT/WBTC/WETH
-    address payable[6] memory reserves =
+    // Reserves Order: WETH/USDT/WBTC
+    address payable[3] memory reserves =
       [
-        0x6B175474E89094C44Da98b954EedeAC495271d0F,
-        0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd,
-        0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,
-        0xdAC17F958D2ee523a2206206994597C13D831ec7,
-        0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599,
-        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
+        0xcAc0759160d57A33D332Ed36a555C10957694407,
+        0x9D973BAc12BB62A55be0F9f7Ad201eEA4f9B8428,
+        0xfA600253bB6fE44CEAb0538000a8448807e50c85
       ];
 
-    uint256[] memory emissions = new uint256[](12);
+    uint256[] memory emissions = new uint256[](6);
 
-    emissions[0] = 1706018518518520; //aDAI
-    emissions[1] = 1706018518518520; //vDebtDAI
-    emissions[2] = 92939814814815; //aGUSD
-    emissions[3] = 92939814814815; //vDebtGUSD
-    emissions[4] = 5291203703703700; //aUSDC
-    emissions[5] = 5291203703703700; //vDebtUSDC
-    emissions[6] = 3293634259259260; //aUSDT
-    emissions[7] = 3293634259259260; //vDebtUSDT
-    emissions[8] = 1995659722222220; //aWBTC
-    emissions[9] = 105034722222222; //vDebtWBTC
-    emissions[10] = 2464942129629630; //aETH
-    emissions[11] = 129733796296296; //vDebtWETH
+    emissions[0] = 1706018518518520; //aWETH
+    emissions[1] = 1706018518518520; //vDebtWETH
+    emissions[2] = 92939814814815; //aUSDT
+    emissions[3] = 92939814814815; //vDebtUSDT
+    emissions[4] = 5291203703703700; //aWBTC
+    emissions[5] = 5291203703703700; //vDebtWBTC
 
     ILendingPoolConfigurator poolConfigurator = ILendingPoolConfigurator(POOL_CONFIGURATOR);
     IAaveIncentivesController incentivesController =

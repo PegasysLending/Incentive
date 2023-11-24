@@ -89,6 +89,7 @@ contract DistributionManager is IAaveDistributionManager {
     }
   }
 
+  event IncentivesController_5(uint256 indexed oldIndex, uint256 indexed emissionPerSecond, uint256 indexed lastUpdateTimestamp, uint256 totalStaked);//TODO
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
    * @param asset The address of the asset being updated
@@ -105,12 +106,14 @@ contract DistributionManager is IAaveDistributionManager {
     uint256 emissionPerSecond = assetConfig.emissionPerSecond;
     uint128 lastUpdateTimestamp = assetConfig.lastUpdateTimestamp;
 
+    emit IncentivesController_5(oldIndex,emissionPerSecond,lastUpdateTimestamp,totalStaked);// TODO 3ade4bf5d7dcc5107623
+
     if (block.timestamp == lastUpdateTimestamp) {
       return oldIndex;
     }
 
-    uint256 newIndex =
-      _getAssetIndex(oldIndex, emissionPerSecond, lastUpdateTimestamp, totalStaked);
+    uint256 newIndex = _getAssetIndex(oldIndex, emissionPerSecond, lastUpdateTimestamp, totalStaked);
+    
 
     if (newIndex != oldIndex) {
       require(uint104(newIndex) == newIndex, 'Index overflow');
@@ -124,6 +127,8 @@ contract DistributionManager is IAaveDistributionManager {
 
     return newIndex;
   }
+
+  event IncentivesController_4(uint256 indexed newIndex, uint256 indexed userIndex, uint256 accruedRewards);//TODO 8f2eb9f13b3cca7aec679
 
   /**
    * @dev Updates the state of an user in a distribution
@@ -144,7 +149,7 @@ contract DistributionManager is IAaveDistributionManager {
     uint256 accruedRewards = 0;
 
     uint256 newIndex = _updateAssetStateInternal(asset, assetData, totalStaked);
-
+    
     if (userIndex != newIndex) {
       if (stakedByUser != 0) {
         accruedRewards = _getRewards(stakedByUser, newIndex, userIndex);
@@ -153,6 +158,8 @@ contract DistributionManager is IAaveDistributionManager {
       assetData.users[user] = newIndex;
       emit UserIndexUpdated(user, asset, newIndex);
     }
+
+    emit IncentivesController_4(newIndex, userIndex, accruedRewards); // TODO 8f2eb9f13b3cca7aec679
 
     return accruedRewards;
   }
@@ -252,8 +259,7 @@ contract DistributionManager is IAaveDistributionManager {
       return currentIndex;
     }
 
-    uint256 currentTimestamp =
-      block.timestamp > distributionEnd ? distributionEnd : block.timestamp;
+    uint256 currentTimestamp = block.timestamp > distributionEnd ? distributionEnd : block.timestamp;
     uint256 timeDelta = currentTimestamp.sub(lastUpdateTimestamp);
     return
       emissionPerSecond.mul(timeDelta).mul(10**uint256(PRECISION)).div(totalBalance).add(
