@@ -20,56 +20,64 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
   using PercentageMath for uint256;
 
   address constant AAVE_TOKEN = 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7;
-  address constant POOL_CONFIGURATOR = 0x5Dda19AC38b19788A7842819d6673034006090E1;
-  address constant ADDRESSES_PROVIDER = 0x17F701D30487b0D718772449f3468C05Be61258f;
-  address constant LENDING_POOL = 0x779c46e29fE0C081cb0b90AC4e3b5D06153A9B62;
+  address constant POOL_CONFIGURATOR = 0x6f1a70E999b575d8B6D789088303aCCBE4ee32D2;//LendingPoolConfigurator
+  address constant ADDRESSES_PROVIDER = 0x6162Ef9eB244631446E190C9E68e744D413544f8;//LendingPoolAddressesProvider
+  address constant LENDING_POOL = 0x5a068E7AdD1b102CFC88AB7b539F9109D05B410E;//LendingPool
   address constant ECO_RESERVE_ADDRESS = 0x5Dda19AC38b19788A7842819d6673034006090E1;//TODO
-  address constant INCENTIVES_CONTROLLER_PROXY_ADDRESS = 0x7900fE24B4d10007D3295301FE9E87345BCcA509;
-  address constant INCENTIVES_CONTROLLER_IMPL_ADDRESS = 0xdfd288C40119584FB45F7053Cb384c885A6832a5;
+  address constant INCENTIVES_CONTROLLER_PROXY_ADDRESS = 0xF7ecfD1D712CF8A487d867D4dE20C09804cD3793;
+  address constant INCENTIVES_CONTROLLER_IMPL_ADDRESS = 0x52E67eC443f9223647dE4618C13e2d84B3e826E8;
 
   uint256 constant DISTRIBUTION_DURATION = 7776000; // 90 days
   // uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 AAVE during 90 days
-  uint256 constant DISTRIBUTION_AMOUNT = 10*(10**18); // 10TTC4 testToken during 90 days
+  uint256 constant DISTRIBUTION_AMOUNT = 20*(10**18); // 10TTC4 testToken during 90 days
   
   function execute(
-    address[3] memory aTokenImplementations,
-    address[3] memory variableDebtImplementations
+    address[4] memory aTokenImplementations,
+    address[4] memory variableDebtImplementations
   ) external override {
     uint256 tokensCounter;
 
-    address[] memory assets = new address[](6);
+    address[] memory assets = new address[](8);
 
     // Reserves Order: WETH/USDT/WBTC
-    address payable[3] memory reserves =
+    address payable[4] memory reserves =
       [
-        0xcAc0759160d57A33D332Ed36a555C10957694407,
-        0x9D973BAc12BB62A55be0F9f7Ad201eEA4f9B8428,
-        0xfA600253bB6fE44CEAb0538000a8448807e50c85
+        0x65b28cBda2E2Ff082131549C1198DC9a50328186,
+        0xFE0e902E5F363029870BDc871D27b0C9C46c8b80,
+        0xd270B0EdA02c6fEF5E213Bc99D4255B9eDd22617,
+        0x386aFa4cED76F3Ddd5D086599030fC21B7Ad9c10
       ];
 
-    uint256[] memory emissions = new uint256[](6);
+    uint256[] memory emissions = new uint256[](8);
 
-    emissions[0] = 1706018518518520; //aWETH
-    emissions[1] = 1706018518518520; //vDebtWETH
-    emissions[2] = 92939814814815; //aUSDT
-    emissions[3] = 92939814814815; //vDebtUSDT
-    emissions[4] = 5291203703703700; //aWBTC
-    emissions[5] = 5291203703703700; //vDebtWBTC
+    emissions[0] = 1706018518518520; //aWSYS
+    emissions[1] = 1706018518518520; //vDebtWSYS
+    emissions[2] = 1706018518518520; //aWETH
+    emissions[3] = 1706018518518520; //vDebtWETH
+    emissions[4] = 92939814814815; //aUSDT
+    emissions[5] = 92939814814815; //vDebtUSDT
+    emissions[6] = 5291203703703700; //aWBTC
+    emissions[7] = 5291203703703700; //vDebtWBTC
 
     ILendingPoolConfigurator poolConfigurator = ILendingPoolConfigurator(POOL_CONFIGURATOR);
-    IAaveIncentivesController incentivesController =
-      IAaveIncentivesController(INCENTIVES_CONTROLLER_PROXY_ADDRESS);
-    IAaveEcosystemReserveController ecosystemReserveController =
-      IAaveEcosystemReserveController(ECO_RESERVE_ADDRESS);
+    IAaveIncentivesController incentivesController = IAaveIncentivesController(INCENTIVES_CONTROLLER_PROXY_ADDRESS);
+    IAaveEcosystemReserveController ecosystemReserveController = IAaveEcosystemReserveController(ECO_RESERVE_ADDRESS);
 
     ILendingPoolAddressesProvider provider = ILendingPoolAddressesProvider(ADDRESSES_PROVIDER);
 
     //adding the incentives controller proxy to the addresses provider
+
+    // (bool success, ) = ADDRESSES_PROVIDER.delegatecall(
+    //   abi.encodeWithSignature("setAddress(bytes32,address)",keccak256('INCENTIVES_CONTROLLER'), INCENTIVES_CONTROLLER_PROXY_ADDRESS)
+    // );
+    // require(success, "setAddress(bytes32,address) fail");
+    
+    
     provider.setAddress(keccak256('INCENTIVES_CONTROLLER'), INCENTIVES_CONTROLLER_PROXY_ADDRESS);
 
     //updating the implementation of the incentives controller proxy
     provider.setAddressAsProxy(keccak256('INCENTIVES_CONTROLLER'), INCENTIVES_CONTROLLER_IMPL_ADDRESS);
-
+    
     require(
       aTokenImplementations.length == variableDebtImplementations.length &&
         aTokenImplementations.length == reserves.length,

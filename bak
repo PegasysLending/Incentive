@@ -9,3 +9,6 @@ npx hardhat --network main deploy-pull-rewards-incentives --reward-token 0x9C716
   - Finished PullRewardsIncentivesController deployment and initialization
     - Proxy: 0xF7ecfD1D712CF8A487d867D4dE20C09804cD3793
     - Impl: 0x52E67eC443f9223647dE4618C13e2d84B3e826E8
+
+<!-- ProposalIncentivesExecutor -->
+    0x490C75A45c7fd1A8fAb75bF4dD4F94C30cE09453

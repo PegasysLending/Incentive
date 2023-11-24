@@ -7,6 +7,7 @@ import {
 } from '../../helpers/contracts-accessors';
 import { waitForTx } from '../../helpers/misc-utils';
 
+// npx hardhat --network main deploy-pull-rewards-incentives --reward-token 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7 --rewards-vault 0x8840e462919F27145bCB25aA54A6F487562C4E84 --emission-manager 0x5Dda19AC38b19788A7842819d6673034006090E1 --proxy-admin 0x8840e462919F27145bCB25aA54A6F487562C4E84
 task(
   `deploy-pull-rewards-incentives`,
   `Deploy and initializes the PullRewardsIncentivesController contract`

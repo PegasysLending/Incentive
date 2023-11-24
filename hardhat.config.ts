@@ -127,7 +127,7 @@ const buidlerConfig: HardhatUserConfig = {
         path: MNEMONIC_PATH,
         initialIndex: 0,
         count: 20,
-  },
+    },
     },
     // tenderlyMain: getCommonNetworkConfig(eEthereumNetwork.tenderlyMain, 3030),
     // tenderly: getCommonNetworkConfig(eEthereumNetwork.tenderlyMain, 3030),
