@@ -1,55 +1,11 @@
-  - Deployed implementation of PullRewardsIncentivesController
-  - Deployed proxy of PullRewardsIncentivesController
-  - Initialized  PullRewardsIncentivesController Proxy
-  - Finished PullRewardsIncentivesController deployment and initialization
-    - Proxy: 0xE70548eF84c856993e5811918f13C759cfF6176F
-    - Impl: 0x776ecdbbe75bd5ffa2E27BecB833E95899d47849
+npm run compile
 
+npx hardhat --network main deploy-pull-rewards-incentives --reward-token 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7 --rewards-vault 0x8840e462919F27145bCB25aA54A6F487562C4E84 --emission-manager 0x5Dda19AC38b19788A7842819d6673034006090E1 --proxy-admin 0x8840e462919F27145bCB25aA54A6F487562C4E84
 
-
-    npx hardhat --network main deploy-pull-rewards-incentives --reward-token 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7 --rewards-vault 0x8840e462919F27145bCB25aA54A6F487562C4E84 --emission-manager 0x5Dda19AC38b19788A7842819d6673034006090E1 --proxy-admin 0x8840e462919F27145bCB25aA54A6F487562C4E84
-
-    <!-- 最新1 -->
-    // 0x4b03e6517cC46A0a8f06805b7820d8d7Ec1Ef2CF
-
-    <!-- 最新2 -->
-
-    // 0x159B92B2Ae4290B6d493213a3b64712e8032De53
-
-    <!-- 最新3 部署完整实现的代理 -->
 
   - Deployed implementation of PullRewardsIncentivesController
   - Deployed proxy of PullRewardsIncentivesController
   - Initialized  PullRewardsIncentivesController Proxy
   - Finished PullRewardsIncentivesController deployment and initialization
-    - Proxy: 0xf3e6D601402075b488d9DaDE904d0BEB909B4F80
-    - Impl: 0x342646A33f5FDAFAcd51f52A4cF53DF78DD8f081
-
-    <!-- 单独实现4 -->
-    //直接实现
-    0xc5AE3923e77781C3d4F144217133c933D9Da0fE0
-    
-    //加入判断
-    0x82954F496435576e19ba04b9236916331eFe2603
-
-    //重新编译加入判断
-    0x36B48913E6C81c13C421c3f28A7486f1DE7e45E1
-
-    //调用测试合约地址
-    0xF9BF5bCfd420e2297fb2A4Fb00E9c96BE0dc2D50
-
-    //latest调试版本
-    0xE9e74ac4a0B4B4129CD86A4c1a4F7Cf04CA90c45
-
-    //重新部署注册器，代理测试版本
-    - Proxy: 0x31D6EfeE854fDA422113e234eF16b2E462a0b1eb
-    - Impl: 0x1f2f920fbF76646aF9c8A69cA6fc20721D654903
-
-    //最新重新编译后版本，_transferRewards授权给代理合约
-    - Proxy: 0x7900fE24B4d10007D3295301FE9E87345BCcA509
-    - Impl: 0xdfd288C40119584FB45F7053Cb384c885A6832a5
-
-
-  <!-- 提案执行地址 -->
-
-  0xD6A56F0EF389Bf47B5fd1306A6243697EB28B848
+    - Proxy: 0xF7ecfD1D712CF8A487d867D4dE20C09804cD3793
+    - Impl: 0x52E67eC443f9223647dE4618C13e2d84B3e826E8

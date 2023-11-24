@@ -4,7 +4,7 @@ import { deployAaveIncentivesController } from '../../helpers/contracts-accessor
 import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 
 // Mainnet addresses
-const AAVE_STAKE = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7';
+const AAVE_STAKE = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7';//rewardToken 奖励token
 const AAVE_SHORT_EXECUTOR = '0x5Dda19AC38b19788A7842819d6673034006090E1';//执行管理员
 
 task('deploy-incentives-impl', 'Incentives controller implementation deployment').setAction(
