@@ -35,7 +35,7 @@ const MAINNET_FORK = process.env.MAINNET_FORK === 'true';
 
 // Prevent to load scripts before compilation and typechain
 if (!SKIP_LOAD) {
-  ['misc', /*'payloads',*/ 'migrations', 'deployment'].forEach((folder) => {
+  ['misc', /*'payloads',*/ 'migrations', 'helpers', 'deployment'].forEach((folder) => {
     const tasksPath = path.join(__dirname, 'tasks', folder);
     fs.readdirSync(tasksPath)
       .filter((pth) => pth.includes('.ts'))
@@ -119,7 +119,6 @@ const buidlerConfig: HardhatUserConfig = {
     // ropsten: getCommonNetworkConfig(eEthereumNetwork.ropsten, 3),
     main: {
       url: 'https://rpc-tanenbaum.rollux.com',
-      // url: 'http://61.10.9.22:10081',
       hardfork: HARDFORK,
       chainId: 57000,
       accounts: {
@@ -127,7 +126,17 @@ const buidlerConfig: HardhatUserConfig = {
         path: MNEMONIC_PATH,
         initialIndex: 0,
         count: 20,
-  },
+      },
+    },
+    localhost: {
+      url: 'http://localhost:8485',
+      chainId: 13773,
+      accounts: {
+        mnemonic: MNEMONIC,
+        path: MNEMONIC_PATH,
+        initialIndex: 0,
+        count: 20,
+      },
     },
     // tenderlyMain: getCommonNetworkConfig(eEthereumNetwork.tenderlyMain, 3030),
     // tenderly: getCommonNetworkConfig(eEthereumNetwork.tenderlyMain, 3030),
