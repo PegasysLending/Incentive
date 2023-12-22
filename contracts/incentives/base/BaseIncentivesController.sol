@@ -63,10 +63,6 @@ abstract contract BaseIncentivesController is
     _configureAssets(assetsConfig);
   }
 
-  
-  event IncentivesController_1(address indexed user, uint256 indexed totalSupply, uint256 indexed userBalance, address sender);//TODO
-  event IncentivesController_2(uint256 indexed accruedRewards);//TODO
-  event IncentivesController_3(address indexed sender, uint256 indexed message);//TODO
 
   /// @inheritdoc IAaveIncentivesController
   function handleAction(
@@ -74,14 +70,11 @@ abstract contract BaseIncentivesController is
     uint256 totalSupply,
     uint256 userBalance
   ) external override {
-    emit IncentivesController_1(user,totalSupply,userBalance,msg.sender);//TODO 7ad7e16467fc911b05ff29
     uint256 accruedRewards = _updateUserAssetInternal(user, msg.sender, userBalance, totalSupply);
-    emit IncentivesController_2(accruedRewards);//TODO 3fffc5dc477a61b9236de70be19
     if (accruedRewards != 0) {
       _usersUnclaimedRewards[user] = _usersUnclaimedRewards[user].add(accruedRewards);
       emit RewardsAccrued(user, accruedRewards);
     }
-    emit IncentivesController_3(user,totalSupply);//TODO 8af3cc0a984d38e6e536
   }
 
   /// @inheritdoc IAaveIncentivesController
