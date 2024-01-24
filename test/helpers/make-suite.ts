@@ -11,7 +11,6 @@ import { MintableErc20 } from '../../types/MintableErc20';
 import { ATokenMock } from '../../types/ATokenMock';
 import {
   PullRewardsIncentivesController,
-  PullRewardsIncentivesController__factory,
   StakedAaveV3,
   StakedTokenIncentivesController,
 } from '../../types';

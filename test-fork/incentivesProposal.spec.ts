@@ -17,21 +17,21 @@ import { IERC20 } from '../types/IERC20';
 import { IAaveGovernanceV2 } from '../types/IAaveGovernanceV2';
 import { ILendingPool } from '../types/ILendingPool';
 import {
-  StakedTokenIncentivesControllerFactory,
+  StakedTokenIncentivesController__factory,
   AToken,
-  ATokenFactory,
-  ProposalIncentivesExecutorFactory,
-  SelfdestructTransferFactory,
+  AToken__factory,
+  ProposalIncentivesExecutor__factory,
+  SelfdestructTransfer__factory,
 } from '../types';
 import { tEthereumAddress } from '../helpers/types';
-import { IERC20Factory } from '../types/IERC20Factory';
-import { IATokenFactory } from '../types/IATokenFactory';
+import { IERC20__factory } from '../types/factories/IERC20__factory';
+import { IAToken__factory } from '../types/factories/IAToken__factory';
 import { getRewards } from '../test/DistributionManager/data-helpers/base-math';
 import { getUserIndex } from '../test/DistributionManager/data-helpers/asset-user-data';
-import { IERC20DetailedFactory } from '../types/IERC20DetailedFactory';
+import { IERC20Detailed__factory } from '../types/factories/IERC20Detailed__factory';
 import { fullCycleLendingPool, getReserveConfigs, spendList } from './helpers';
 import { deployAaveIncentivesController } from '../helpers/contracts-accessors';
-import { IGovernancePowerDelegationTokenFactory } from '../types/IGovernancePowerDelegationTokenFactory';
+import { IGovernancePowerDelegationToken__factory } from '../types/factories/IGovernancePowerDelegationToken__factory';
 import { logError } from '../helpers/tenderly-utils';
 
 const {
@@ -124,10 +124,10 @@ describe('Enable incentives in target assets', () => {
     // Deploy Proposal Executor Payload
     const {
       address: proposalExecutionPayloadAddress,
-    } = await new ProposalIncentivesExecutorFactory(proposer).deploy();
+    } = await new ProposalIncentivesExecutor__factory(proposer).deploy();
     proposalExecutionPayload = proposalExecutionPayloadAddress;
     // Send ether to the AAVE_WHALE, which is a non payable contract via selfdestruct
-    const selfDestructContract = await new SelfdestructTransferFactory(proposer).deploy();
+    const selfDestructContract = await new SelfdestructTransfer__factory(proposer).deploy();
     await (
       await selfDestructContract.destroyAndTransfer(AAVE_WHALE, {
         value: ethers.utils.parseEther('1'),
@@ -160,11 +160,11 @@ describe('Enable incentives in target assets', () => {
       variableDebtTokenAddress,
     } = await pool.getReserveData(DAI_TOKEN);
 
-    aave = IERC20Factory.connect(AAVE_TOKEN, whale);
-    stkAave = IERC20Factory.connect(AAVE_STAKE, proposer);
-    dai = IERC20Factory.connect(DAI_TOKEN, daiHolder);
-    aDAI = ATokenFactory.connect(aTokenAddress, proposer);
-    variableDebtDAI = IERC20Factory.connect(variableDebtTokenAddress, proposer);
+    aave = IERC20__factory.connect(AAVE_TOKEN, whale);
+    stkAave = IERC20__factory.connect(AAVE_STAKE, proposer);
+    dai = IERC20__factory.connect(DAI_TOKEN, daiHolder);
+    aDAI = AToken__factory.connect(aTokenAddress, proposer);
+    variableDebtDAI = IERC20__factory.connect(variableDebtTokenAddress, proposer);
 
     // Transfer enough AAVE to proposer
     await (await aave.transfer(proposer.address, parseEther('2000000'))).wait();
@@ -180,8 +180,8 @@ describe('Enable incentives in target assets', () => {
       const { aTokenAddress, variableDebtTokenAddress } = await pool.getReserveData(
         reserveConfigs[x].tokenAddress
       );
-      const aToken = IERC20DetailedFactory.connect(aTokenAddress, proposer);
-      const varDebtToken = IERC20DetailedFactory.connect(variableDebtTokenAddress, proposer);
+      const aToken = IERC20Detailed__factory.connect(aTokenAddress, proposer);
+      const varDebtToken = IERC20Detailed__factory.connect(variableDebtTokenAddress, proposer);
 
       symbols[symbol] = {
         aToken: {
@@ -202,7 +202,7 @@ describe('Enable incentives in target assets', () => {
     try {
       const balance = await aave.balanceOf(proposer.address);
       console.log('AAVE Balance proposer', formatEther(balance));
-      const aaveGovToken = IGovernancePowerDelegationTokenFactory.connect(AAVE_TOKEN, proposer);
+      const aaveGovToken = IGovernancePowerDelegationToken__factory.connect(AAVE_TOKEN, proposer);
       const propositionPower = await aaveGovToken.getPowerAtBlock(
         proposer.address,
         ((await latestBlock()) - 1).toString(),
@@ -262,10 +262,10 @@ describe('Enable incentives in target assets', () => {
   });
 
   it('Check emission rate', async () => {
-    const incentives = StakedTokenIncentivesControllerFactory.connect(incentivesProxy, proposer);
+    const incentives = StakedTokenIncentivesController__factory.connect(incentivesProxy, proposer);
     const tokenAddress = DAI_TOKEN;
     const { aTokenAddress, variableDebtTokenAddress } = await pool.getReserveData(tokenAddress);
-    const reserve = IERC20Factory.connect(tokenAddress, proposer);
+    const reserve = IERC20__factory.connect(tokenAddress, proposer);
 
     // Amounts
     const depositAmount = parseEther('10000');
@@ -285,10 +285,10 @@ describe('Enable incentives in target assets', () => {
 
     await increaseTime(86400);
 
-    const atokenBalance = await IATokenFactory.connect(aTokenAddress, proposer).scaledBalanceOf(
+    const atokenBalance = await IAToken__factory.connect(aTokenAddress, proposer).scaledBalanceOf(
       proposer.address
     );
-    const priorStkBalance = await IERC20Factory.connect(stkAave.address, proposer).balanceOf(
+    const priorStkBalance = await IERC20__factory.connect(stkAave.address, proposer).balanceOf(
       proposer.address
     );
     const userIndexBefore = await getUserIndex(incentives, proposer.address, aTokenAddress);
@@ -383,8 +383,8 @@ describe('Enable incentives in target assets', () => {
     for (let x = 0; x < reserveConfigs.length; x++) {
       const { tokenAddress, symbol } = reserveConfigs[x];
       const { aTokenAddress, variableDebtTokenAddress } = await pool.getReserveData(tokenAddress);
-      const aToken = IERC20DetailedFactory.connect(aTokenAddress, proposer);
-      const varDebtToken = IERC20DetailedFactory.connect(variableDebtTokenAddress, proposer);
+      const aToken = IERC20Detailed__factory.connect(aTokenAddress, proposer);
+      const varDebtToken = IERC20Detailed__factory.connect(variableDebtTokenAddress, proposer);
 
       const aTokenDetails = {
         name: await aToken.name(),
@@ -402,7 +402,7 @@ describe('Enable incentives in target assets', () => {
 
   it('Users should be able to claim incentives', async () => {
     // Initialize proxy for incentives controller
-    const incentives = StakedTokenIncentivesControllerFactory.connect(incentivesProxy, proposer);
+    const incentives = StakedTokenIncentivesController__factory.connect(incentivesProxy, proposer);
     const reserveConfigs = await getReserveConfigs(POOL_PROVIDER, RESERVES, proposer);
 
     for (let x = 0; x < reserveConfigs.length; x++) {
@@ -410,7 +410,7 @@ describe('Enable incentives in target assets', () => {
       const { aTokenAddress, variableDebtTokenAddress } = await pool.getReserveData(
         reserveConfigs[x].tokenAddress
       );
-      const reserve = IERC20Factory.connect(tokenAddress, proposer);
+      const reserve = IERC20__factory.connect(tokenAddress, proposer);
 
       // Amounts
       const depositAmount = parseUnits(spendList[symbol].deposit, spendList[symbol].decimals);
@@ -437,7 +437,7 @@ describe('Enable incentives in target assets', () => {
   });
 
   it('User should be able to interact with LendingPool with DAI/GUSD/USDC/USDT/WBTC/WETH', async () => {
-    const incentives = StakedTokenIncentivesControllerFactory.connect(incentivesProxy, proposer);
+    const incentives = StakedTokenIncentivesController__factory.connect(incentivesProxy, proposer);
     const distributionEnd = await incentives.getDistributionEnd();
 
     const { timestamp } = await DRE.ethers.provider.getBlock('latest');
