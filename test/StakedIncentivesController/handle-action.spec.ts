@@ -50,7 +50,7 @@ const handleActionScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('AaveIncentivesController handleAction tests', (testEnv) => {
+makeSuite('PegasysIncentivesController handleAction tests', (testEnv) => {
   for (const {
     caseName,
     totalSupply,
@@ -61,26 +61,26 @@ makeSuite('AaveIncentivesController handleAction tests', (testEnv) => {
     it(caseName, async () => {
       await increaseTime(100);
 
-      const { aaveIncentivesController, users, aDaiMock } = testEnv;
+      const { pegasysIncentivesController, users, aDaiMock } = testEnv;
       const userAddress = users[1].address;
       const underlyingAsset = aDaiMock.address;
 
       // update emissionPerSecond in advance to not affect user calculations
       if (emissionPerSecond) {
-        await aaveIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
+        await pegasysIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
       }
 
-      const distributionEndTimestamp = await aaveIncentivesController.DISTRIBUTION_END();
+      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
 
-      const rewardsBalanceBefore = await aaveIncentivesController.getUserUnclaimedRewards(
+      const rewardsBalanceBefore = await pegasysIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
       const userIndexBefore = await getUserIndex(
-        aaveIncentivesController,
+        pegasysIncentivesController,
         userAddress,
         underlyingAsset
       );
-      const assetDataBefore = (await getAssetsData(aaveIncentivesController, [underlyingAsset]))[0];
+      const assetDataBefore = (await getAssetsData(pegasysIncentivesController, [underlyingAsset]))[0];
 
       if (customTimeMovement) {
         await increaseTime(customTimeMovement);
@@ -94,12 +94,12 @@ makeSuite('AaveIncentivesController handleAction tests', (testEnv) => {
       const actionBlockTimestamp = await getBlockTimestamp(handleActionReceipt.blockNumber);
 
       const userIndexAfter = await getUserIndex(
-        aaveIncentivesController,
+        pegasysIncentivesController,
         userAddress,
         underlyingAsset
       );
 
-      const assetDataAfter = (await getAssetsData(aaveIncentivesController, [underlyingAsset]))[0];
+      const assetDataAfter = (await getAssetsData(pegasysIncentivesController, [underlyingAsset]))[0];
 
       const expectedAccruedRewards = getRewards(
         userBalance,
@@ -107,7 +107,7 @@ makeSuite('AaveIncentivesController handleAction tests', (testEnv) => {
         userIndexBefore
       ).toString();
 
-      const rewardsBalanceAfter = await aaveIncentivesController.getUserUnclaimedRewards(
+      const rewardsBalanceAfter = await pegasysIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
 

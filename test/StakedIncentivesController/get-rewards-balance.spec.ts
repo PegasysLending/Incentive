@@ -28,14 +28,14 @@ const getRewardsBalanceScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('AaveIncentivesController getRewardsBalance tests', (testEnv) => {
+makeSuite('PegasysIncentivesController getRewardsBalance tests', (testEnv) => {
   for (const { caseName, emissionPerSecond } of getRewardsBalanceScenarios) {
     it(caseName, async () => {
       await increaseTime(100);
 
-      const { aaveIncentivesController, users, aDaiMock } = testEnv;
+      const { pegasysIncentivesController, users, aDaiMock } = testEnv;
 
-      const distributionEndTimestamp = await aaveIncentivesController.DISTRIBUTION_END();
+      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
       const userAddress = users[1].address;
       const stakedByUser = 22 * caseName.length;
       const totalStaked = 33 * caseName.length;
@@ -45,7 +45,7 @@ makeSuite('AaveIncentivesController getRewardsBalance tests', (testEnv) => {
       await advanceBlock((await timeLatest()).plus(100).toNumber());
       if (emissionPerSecond) {
         await aDaiMock.setUserBalanceAndSupply('0', totalStaked);
-        await aaveIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
+        await pegasysIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
       }
       await aDaiMock.handleActionOnAic(userAddress, totalStaked, stakedByUser);
       await advanceBlock((await timeLatest()).plus(100).toNumber());
@@ -55,17 +55,17 @@ makeSuite('AaveIncentivesController getRewardsBalance tests', (testEnv) => {
       );
       const lastTxTimestamp = await getBlockTimestamp(lastTxReceipt.blockNumber);
 
-      const unclaimedRewardsBefore = await aaveIncentivesController.getUserUnclaimedRewards(
+      const unclaimedRewardsBefore = await pegasysIncentivesController.getUserUnclaimedRewards(
         userAddress
       );
 
-      const unclaimedRewards = await aaveIncentivesController.getRewardsBalance(
+      const unclaimedRewards = await pegasysIncentivesController.getRewardsBalance(
         [underlyingAsset],
         userAddress
       );
 
-      const userIndex = await getUserIndex(aaveIncentivesController, userAddress, underlyingAsset);
-      const assetData = (await getAssetsData(aaveIncentivesController, [underlyingAsset]))[0];
+      const userIndex = await getUserIndex(pegasysIncentivesController, userAddress, underlyingAsset);
+      const assetData = (await getAssetsData(pegasysIncentivesController, [underlyingAsset]))[0];
 
       await aDaiMock.cleanUserState();
 

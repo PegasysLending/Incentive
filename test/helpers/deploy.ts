@@ -1,14 +1,14 @@
 import { Signer } from 'ethers';
 import { ZERO_ADDRESS } from '../../helpers/constants';
 import {
-  deployAaveIncentivesController,
+  deployPegasysIncentivesController,
   deployInitializableAdminUpgradeabilityProxy,
   deployMintableErc20,
 } from '../../helpers/contracts-accessors';
 import { getFirstSigner, insertContractAddressInDb } from '../../helpers/contracts-helpers';
 import { verifyContract } from '../../helpers/etherscan-verification';
 import { eContractid, tEthereumAddress } from '../../helpers/types';
-import { MintableErc20, StakedAaveV3__factory } from '../../types';
+import { MintableErc20, StakedPegasysV3__factory } from '../../types';
 
 export const COOLDOWN_SECONDS = '3600'; // 1 hour in seconds
 export const UNSTAKE_WINDOW = '1800'; // 30 min in second
@@ -17,16 +17,16 @@ export const testDeployIncentivesController = async (
   emissionManager: Signer,
   vaultOfRewards: Signer,
   proxyAdmin: Signer,
-  aaveToken: MintableErc20
+  pegasysToken: MintableErc20
 ) => {
   const emissionManagerAddress = await emissionManager.getAddress();
   // Deploy proxies and implementations
   const stakeProxy = await deployInitializableAdminUpgradeabilityProxy();
   const incentivesProxy = await deployInitializableAdminUpgradeabilityProxy();
 
-  const aaveStakeV3 = await deployStakedAaveV3([
-    aaveToken.address,
-    aaveToken.address,
+  const pegasysStakeV3 = await deployStakedPegasysV3([
+    pegasysToken.address,
+    pegasysToken.address,
     COOLDOWN_SECONDS,
     UNSTAKE_WINDOW,
     await vaultOfRewards.getAddress(),
@@ -34,13 +34,13 @@ export const testDeployIncentivesController = async (
     (1000 * 60 * 60).toString(),
   ]);
 
-  const incentivesImplementation = await deployAaveIncentivesController([
+  const incentivesImplementation = await deployPegasysIncentivesController([
     stakeProxy.address,
     emissionManagerAddress,
   ]);
 
   // Initialize proxies
-  const aaveStakeInit = aaveStakeV3.interface.encodeFunctionData(
+  const pegasysStakeInit = pegasysStakeV3.interface.encodeFunctionData(
     // @ts-ignore
     'initialize(address,address,address,uint256,string,string,uint8)',
     [
@@ -48,8 +48,8 @@ export const testDeployIncentivesController = async (
       emissionManagerAddress,
       emissionManagerAddress,
       '2000',
-      'Staked AAVE',
-      'stkAAVE',
+      'Staked PEGASYS',
+      'stkPEGASYS',
       '18',
     ]
   );
@@ -57,9 +57,9 @@ export const testDeployIncentivesController = async (
 
   await (
     await stakeProxy['initialize(address,address,bytes)'](
-      aaveStakeV3.address,
+      pegasysStakeV3.address,
       await proxyAdmin.getAddress(),
-      aaveStakeInit
+      pegasysStakeInit
     )
   ).wait();
   await (
@@ -70,12 +70,12 @@ export const testDeployIncentivesController = async (
     )
   ).wait();
 
-  await insertContractAddressInDb(eContractid.AaveIncentivesController, incentivesProxy.address);
+  await insertContractAddressInDb(eContractid.PegasysIncentivesController, incentivesProxy.address);
 
   return { incentivesProxy, stakeProxy };
 };
 
-export const deployStakedAaveV3 = async (
+export const deployStakedPegasysV3 = async (
   [
     stakedToken,
     rewardsToken,
@@ -95,7 +95,7 @@ export const deployStakedAaveV3 = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedAaveV3;
+  const id = eContractid.StakedPegasysV3;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -106,7 +106,7 @@ export const deployStakedAaveV3 = async (
     distributionDuration,
     ZERO_ADDRESS, // gov address
   ];
-  const instance = await new StakedAaveV3__factory(await getFirstSigner()).deploy(
+  const instance = await new StakedPegasysV3__factory(await getFirstSigner()).deploy(
     stakedToken,
     rewardsToken,
     cooldownSeconds,

@@ -11,15 +11,15 @@ import { MintableErc20 } from '../../types/MintableErc20';
 import { ATokenMock } from '../../types/ATokenMock';
 import {
   PullRewardsIncentivesController,
-  StakedAaveV3,
+  StakedPegasysV3,
   StakedTokenIncentivesController,
 } from '../../types';
 
 chai.use(bignumberChai());
 
-export let stakedAaveInitializeTimestamp = 0;
-export const setStakedAaveInitializeTimestamp = (timestamp: number) => {
-  stakedAaveInitializeTimestamp = timestamp;
+export let stakedPegasysInitializeTimestamp = 0;
+export const setStakedPegasysInitializeTimestamp = (timestamp: number) => {
+  stakedPegasysInitializeTimestamp = timestamp;
 };
 
 export interface SignerWithAddress {
@@ -30,10 +30,10 @@ export interface TestEnv {
   rewardsVault: SignerWithAddress;
   deployer: SignerWithAddress;
   users: SignerWithAddress[];
-  aaveToken: MintableErc20;
-  aaveIncentivesController: StakedTokenIncentivesController;
+  pegasysToken: MintableErc20;
+  pegasysIncentivesController: StakedTokenIncentivesController;
   pullRewardsIncentivesController: PullRewardsIncentivesController;
-  stakedAave: StakedAaveV3;
+  stakedPegasys: StakedPegasysV3;
   aDaiMock: ATokenMock;
   aWethMock: ATokenMock;
   aDaiBaseMock: ATokenMock;
@@ -50,9 +50,9 @@ const setBuidlerevmSnapshotId = (id: string) => {
 const testEnv: TestEnv = {
   deployer: {} as SignerWithAddress,
   users: [] as SignerWithAddress[],
-  aaveToken: {} as MintableErc20,
-  stakedAave: {} as StakedAaveV3,
-  aaveIncentivesController: {} as StakedTokenIncentivesController,
+  pegasysToken: {} as MintableErc20,
+  stakedPegasys: {} as StakedPegasysV3,
+  pegasysIncentivesController: {} as StakedTokenIncentivesController,
   pullRewardsIncentivesController: {} as PullRewardsIncentivesController,
   aDaiMock: {} as ATokenMock,
   aWethMock: {} as ATokenMock,
@@ -61,9 +61,9 @@ const testEnv: TestEnv = {
 } as TestEnv;
 
 export async function initializeMakeSuite(
-  aaveToken: MintableErc20,
-  stakedAave: StakedAaveV3,
-  aaveIncentivesController: StakedTokenIncentivesController,
+  pegasysToken: MintableErc20,
+  stakedPegasys: StakedPegasysV3,
+  pegasysIncentivesController: StakedTokenIncentivesController,
   pullRewardsIncentivesController: PullRewardsIncentivesController
 ) {
   const [_deployer, _proxyAdmin, ...restSigners] = await getEthersSigners();
@@ -85,10 +85,10 @@ export async function initializeMakeSuite(
   }
   testEnv.deployer = deployer;
   testEnv.rewardsVault = rewardsVault;
-  testEnv.stakedAave = stakedAave;
-  testEnv.aaveIncentivesController = aaveIncentivesController;
+  testEnv.stakedPegasys = stakedPegasys;
+  testEnv.pegasysIncentivesController = pegasysIncentivesController;
   testEnv.pullRewardsIncentivesController = pullRewardsIncentivesController;
-  testEnv.aaveToken = aaveToken;
+  testEnv.pegasysToken = pegasysToken;
   testEnv.aDaiMock = await getATokenMock({ slug: 'aDai' });
   testEnv.aWethMock = await getATokenMock({ slug: 'aWeth' });
   testEnv.aDaiBaseMock = await getATokenMock({ slug: 'aDaiBase' });

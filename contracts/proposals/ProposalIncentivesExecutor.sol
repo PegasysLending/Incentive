@@ -5,8 +5,8 @@ pragma abicoder v2;
 import {IERC20} from '@aave/aave-stake/contracts/interfaces/IERC20.sol';
 import {ILendingPoolAddressesProvider} from '../interfaces/ILendingPoolAddressesProvider.sol';
 import {ILendingPoolConfigurator} from '../interfaces/ILendingPoolConfigurator.sol';
-import {IAaveIncentivesController} from '../interfaces/IAaveIncentivesController.sol';
-import {IAaveEcosystemReserveController} from '../interfaces/IAaveEcosystemReserveController.sol';
+import {IPegasysIncentivesController} from '../interfaces/IPegasysIncentivesController.sol';
+import {IPegasysEcosystemReserveController} from '../interfaces/IPegasysEcosystemReserveController.sol';
 import {IProposalIncentivesExecutor} from '../interfaces/IProposalIncentivesExecutor.sol';
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
 import {DataTypes} from '../utils/DataTypes.sol';
@@ -19,7 +19,7 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
   using SafeMath for uint256;
   using PercentageMath for uint256;
 
-  address constant AAVE_TOKEN = 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7;
+  address constant Pegasys_TOKEN = 0x9C716BA14d87c53041bB7fF95C977d5a382E71F7;
   address constant POOL_CONFIGURATOR = 0x5Dda19AC38b19788A7842819d6673034006090E1;
   address constant ADDRESSES_PROVIDER = 0x17F701D30487b0D718772449f3468C05Be61258f;
   address constant LENDING_POOL = 0x779c46e29fE0C081cb0b90AC4e3b5D06153A9B62;
@@ -28,7 +28,7 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
   address constant INCENTIVES_CONTROLLER_IMPL_ADDRESS = 0xdfd288C40119584FB45F7053Cb384c885A6832a5;
 
   uint256 constant DISTRIBUTION_DURATION = 7776000; // 90 days
-  // uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 AAVE during 90 days
+  // uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 Pegasys during 90 days
   uint256 constant DISTRIBUTION_AMOUNT = 10*(10**18); // 10TTC4 testToken during 90 days
   
   function execute(
@@ -57,10 +57,10 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
     emissions[5] = 5291203703703700; //vDebtWBTC
 
     ILendingPoolConfigurator poolConfigurator = ILendingPoolConfigurator(POOL_CONFIGURATOR);
-    IAaveIncentivesController incentivesController =
-      IAaveIncentivesController(INCENTIVES_CONTROLLER_PROXY_ADDRESS);
-    IAaveEcosystemReserveController ecosystemReserveController =
-      IAaveEcosystemReserveController(ECO_RESERVE_ADDRESS);
+    IPegasysIncentivesController incentivesController =
+      IPegasysIncentivesController(INCENTIVES_CONTROLLER_PROXY_ADDRESS);
+    IPegasysEcosystemReserveController ecosystemReserveController =
+      IPegasysEcosystemReserveController(ECO_RESERVE_ADDRESS);
 
     ILendingPoolAddressesProvider provider = ILendingPoolAddressesProvider(ADDRESSES_PROVIDER);
 
@@ -101,9 +101,9 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
       assets[tokensCounter++] = reserveData.variableDebtTokenAddress;
 
     }
-    // Transfer AAVE funds to the Incentives Controller
+    // Transfer Pegasys funds to the Incentives Controller
     ecosystemReserveController.transfer(
-      AAVE_TOKEN,
+      Pegasys_TOKEN,
       INCENTIVES_CONTROLLER_PROXY_ADDRESS,
       DISTRIBUTION_AMOUNT
     );

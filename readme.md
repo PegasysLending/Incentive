@@ -2,17 +2,17 @@
 [![Build pass](https://github.com/aave/incentives-controller/actions/workflows/node.js.yml/badge.svg)](https://github.com/aave/incentives-controller/actions/workflows/node.js.yml)
 [![codecov](https://codecov.io/gh/aave/incentives-controller/branch/master/graph/badge.svg?token=DRFNLw506C)](https://codecov.io/gh/aave/incentives-controller)
 
-# Aave incentives
+# Pegasys incentives
 
 ## Introduction
 
-This repo contains the code and implementation of the contracts used to activate the liquidity mining program on the main market of the Aave protocol.
+This repo contains the code and implementation of the contracts used to activate the liquidity mining program on the main market of the Pegasys protocol.
 
 ## Implementation
 
-The rewards are distributed in the form of stkAAVE, which is obtained by staking Aave in the Safety Module Staking contract located at https://etherscan.io/address/0x4da27a545c0c5b758a6ba100e3a049001de870f5.
+The rewards are distributed in the form of stkPegasys, which is obtained by staking Pegasys in the Safety Module Staking contract located at https://etherscan.io/address/0x4da27a545c0c5b758a6ba100e3a049001de870f5.
 
-The incentives controller contract, `StakedTokenIncentivesController`, stakes the rewards while transferring the obtained stkAAVE to the claiming user.
+The incentives controller contract, `StakedTokenIncentivesController`, stakes the rewards while transferring the obtained stkPegasys to the claiming user.
 
 The implementation logic is defined as follow:
 
@@ -21,3 +21,36 @@ The implementation logic is defined as follow:
 - For each user, a `userIndex` keeps track of the user accumulated rewards
 - On `handleAction()`, that is triggered whenever an aToken/debt Token is minted/burned by a user, the `userIndex` and the `assetIndex` are accumulated depending on the time passed since the last action
 - At any point in time the user pending rewards can be queried through the `getRewardsBalance()` function
+
+## Setup
+
+Follow the next steps to setup the repository:
+
+- Create an enviroment file named `.env` and fill the next enviroment variables
+
+```
+# Mnemonic, only first address will be used
+MNEMONIC=""
+
+
+```
+
+## Compile
+
+```
+npm run compile
+```
+
+## Support other network
+In the hardhat.config.ts file, set the main network to Rollux main/test.
+
+## Deploy
+```
+# Current main is tanenbaum.rollux
+npx hardhat --network main deploy-pull-rewards-incentives --reward-token 0xxxxxx --rewards-vault 0xxxxxx --emission-manager 0xxxxxx --proxy-admin 0xxxxxx
+
+```
+- reward-token: Incentive token (AgaveToken), an ERC20 standard token, once deployed it cannot be modified.
+- rewards-vault: Treasury account, transfers rewardToken from this address to the user during claim.
+- emission-manager: Emission manager, can set related parameters.
+- proxy-admin: Proxy contract administrator.

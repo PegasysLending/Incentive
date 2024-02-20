@@ -118,7 +118,7 @@ const configureAssetScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('AaveIncentivesController configureAssets', (testEnv: TestEnv) => {
+makeSuite('PegasysIncentivesController configureAssets', (testEnv: TestEnv) => {
   let deployedAssets;
 
   before(async () => {
@@ -127,9 +127,9 @@ makeSuite('AaveIncentivesController configureAssets', (testEnv: TestEnv) => {
 
   // custom checks
   it('Tries to submit config updates not from emission manager', async () => {
-    const { aaveIncentivesController, users } = testEnv;
+    const { pegasysIncentivesController, users } = testEnv;
     await expect(
-      aaveIncentivesController.connect(users[2].signer).configureAssets([], [])
+      pegasysIncentivesController.connect(users[2].signer).configureAssets([], [])
     ).to.be.revertedWith('ONLY_EMISSION_MANAGER');
   });
 
@@ -140,8 +140,8 @@ makeSuite('AaveIncentivesController configureAssets', (testEnv: TestEnv) => {
     customTimeMovement,
   } of configureAssetScenarios) {
     it(caseName, async () => {
-      const { aaveIncentivesController } = testEnv;
-      const distributionEndTimestamp = await aaveIncentivesController.DISTRIBUTION_END();
+      const { pegasysIncentivesController } = testEnv;
+      const distributionEndTimestamp = await pegasysIncentivesController.DISTRIBUTION_END();
 
       const assets: string[] = [];
       const assetsEmissions: BigNumberish[] = [];
@@ -166,17 +166,17 @@ makeSuite('AaveIncentivesController configureAssets', (testEnv: TestEnv) => {
         });
       }
 
-      const assetsConfigBefore = await getAssetsData(aaveIncentivesController, assets);
+      const assetsConfigBefore = await getAssetsData(pegasysIncentivesController, assets);
 
       if (customTimeMovement) {
         await increaseTime(customTimeMovement);
       }
 
       const txReceipt = await waitForTx(
-        await aaveIncentivesController.configureAssets(assets, assetsEmissions)
+        await pegasysIncentivesController.configureAssets(assets, assetsEmissions)
       );
       const configsUpdateBlockTimestamp = await getBlockTimestamp(txReceipt.blockNumber);
-      const assetsConfigAfter = await getAssetsData(aaveIncentivesController, assets);
+      const assetsConfigAfter = await getAssetsData(pegasysIncentivesController, assets);
 
       const eventsEmitted = txReceipt.events || [];
 

@@ -8,13 +8,13 @@ export type eNetwork = eEthereumNetwork | ePolygonNetwork | eXDaiNetwork | eAval
 
 export enum eContractid {
   DistributionManager = 'DistributionManager',
-  AaveIncentivesController = 'AaveIncentivesController',
+  PegasysIncentivesController = 'PegasysIncentivesController',
   MintableErc20 = 'MintableErc20',
   ATokenMock = 'ATokenMock',
   IERC20Detailed = 'IERC20Detailed',
   StakedTokenIncentivesController = 'StakedTokenIncentivesController',
   MockSelfDestruct = 'MockSelfDestruct',
-  StakedAaveV3 = 'StakedAaveV3',
+  StakedPegasysV3 = 'StakedPegasysV3',
   PullRewardsIncentivesController = 'PullRewardsIncentivesController',
 }
 

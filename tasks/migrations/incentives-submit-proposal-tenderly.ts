@@ -9,15 +9,15 @@ import { Signer } from '@ethersproject/abstract-signer';
 import { logError } from '../../helpers/tenderly-utils';
 
 const {
-  AAVE_TOKEN = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7',
-  AAVE_GOVERNANCE_V2 = '0x3515F2b1Cc5E13a0A8AE89BF5B313D442B36aA66', // mainnet
-  AAVE_SHORT_EXECUTOR = '0x3162c8729602EF828C3608459bF178FaA93B0d0e', // mainnet
+  PEGASYS_TOKEN = '0x9C716BA14d87c53041bB7fF95C977d5a382E71F7',
+  PEGASYS_GOVERNANCE_V2 = '0x3515F2b1Cc5E13a0A8AE89BF5B313D442B36aA66', // mainnet
+  PEGASYS_SHORT_EXECUTOR = '0x3162c8729602EF828C3608459bF178FaA93B0d0e', // mainnet
 } = process.env;
 const VOTING_DURATION = 19200;
 
-const AAVE_WHALE = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
+const PEGASYS_WHALE = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
 
-task('incentives-submit-proposal:tenderly', 'Submit the incentives proposal to Aave Governance')
+task('incentives-submit-proposal:tenderly', 'Submit the incentives proposal to Pegasys Governance')
   .addParam('proposalExecutionPayload')
   .addParam('aTokens')
   .addParam('variableDebtTokens')
@@ -31,13 +31,13 @@ task('incentives-submit-proposal:tenderly', 'Submit the incentives proposal to A
       const { signer } = await getDefenderRelaySigner();
       proposer = signer;
 
-      const whale = DRE.ethers.provider.getSigner(AAVE_WHALE);
-      const aave = IERC20__factory.connect(AAVE_TOKEN, whale);
+      const whale = DRE.ethers.provider.getSigner(PEGASYS_WHALE);
+      const pegasys = IERC20__factory.connect(PEGASYS_TOKEN, whale);
 
-      // Transfer enough AAVE to proposer
-      await (await aave.transfer(await proposer.getAddress(), parseEther('2000000'))).wait();
+      // Transfer enough PEGASYS to proposer
+      await (await pegasys.transfer(await proposer.getAddress(), parseEther('2000000'))).wait();
 
-      if (!AAVE_TOKEN || !AAVE_GOVERNANCE_V2 || !AAVE_SHORT_EXECUTOR) {
+      if (!PEGASYS_TOKEN || !PEGASYS_GOVERNANCE_V2 || !PEGASYS_SHORT_EXECUTOR) {
         throw new Error(
           'You have not set correctly the .env file, make sure to read the README.md'
         );
@@ -55,18 +55,18 @@ task('incentives-submit-proposal:tenderly', 'Submit the incentives proposal to A
 
       // Initialize contracts and tokens
       const gov = (await DRE.ethers.getContractAt(
-        'IAaveGovernanceV2',
-        AAVE_GOVERNANCE_V2,
+        'IPegasysGovernanceV2',
+        PEGASYS_GOVERNANCE_V2,
         proposer
       )) as IAaveGovernanceV2;
 
       // Balance and proposal power check
-      const balance = await aave.balanceOf(proposerAddress);
+      const balance = await pegasys.balanceOf(proposerAddress);
       const priorBlock = ((await latestBlock()) - 1).toString();
-      const aaveGovToken = IGovernancePowerDelegationToken__factory.connect(AAVE_TOKEN, proposer);
-      const propositionPower = await aaveGovToken.getPowerAtBlock(proposerAddress, priorBlock, '1');
+      const pegasysGovToken = IGovernancePowerDelegationToken__factory.connect(PEGASYS_TOKEN, proposer);
+      const propositionPower = await pegasysGovToken.getPowerAtBlock(proposerAddress, priorBlock, '1');
 
-      console.log('- AAVE Balance proposer', formatEther(balance));
+      console.log('- PEGASYS Balance proposer', formatEther(balance));
       console.log(
         `- Proposition power of ${proposerAddress} at block: ${priorBlock}`,
         formatEther(propositionPower)
@@ -78,8 +78,8 @@ task('incentives-submit-proposal:tenderly', 'Submit the incentives proposal to A
         proposalExecutionPayload,
         aTokens,
         variableDebtTokens,
-        aaveGovernance: AAVE_GOVERNANCE_V2,
-        shortExecutor: AAVE_SHORT_EXECUTOR,
+        pegasysGovernance: PEGASYS_GOVERNANCE_V2,
+        shortExecutor: PEGASYS_SHORT_EXECUTOR,
         defender: true,
       };
       console.log('- Submitting proposal with following params:');

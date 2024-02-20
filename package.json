@@ -1,7 +1,7 @@
 {
   "name": "incentives-controller",
   "version": "1.0.0",
-  "description": "Incentives controller for Aave protocol",
+  "description": "Incentives controller for Pegasys protocol",
   "files": [
     "contracts",
     "artifacts"
@@ -34,14 +34,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aave/incentives-controller.git"
+    "url": "git+https://github.com/PegasysLending/Incentive"
   },
   "author": "David Racero",
   "license": "AGPLv3",
   "bugs": {
-    "url": "https://github.com/aave/incentives-controller/issues"
+    "url": "https://github.com/PegasysLending/Incentive/issues"
   },
-  "homepage": "https://github.com/aave/incentives-controller#readme",
+  "homepage": "https://github.com/PegasysLending/Incentive#readme",
   "devDependencies": {
     "@aave/protocol-v2": "^1.0.2-fat.3",
     "@nomiclabs/hardhat-ethers": "^2.0.0",

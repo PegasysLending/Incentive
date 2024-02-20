@@ -58,9 +58,9 @@ makeSuite('pullRewardsIncentivesController misc tests', (testEnv) => {
   });
 
   it('Should REWARD_TOKEN getter returns the stake token address to keep old interface compatibility', async () => {
-    const { pullRewardsIncentivesController, aaveToken } = testEnv;
+    const { pullRewardsIncentivesController, pegasysToken } = testEnv;
     await expect(await pullRewardsIncentivesController.REWARD_TOKEN()).to.be.equal(
-      aaveToken.address
+      pegasysToken.address
     );
   });
 

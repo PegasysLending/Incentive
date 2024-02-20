@@ -60,7 +60,7 @@ const getRewardsBalanceScenarios: ScenarioAction[] = [
   },
 ];
 
-makeSuite('AaveIncentivesController claimRewards tests', (testEnv) => {
+makeSuite('PegasysIncentivesController claimRewards tests', (testEnv) => {
   for (const {
     caseName,
     amountToClaim: _amountToClaim,
@@ -70,10 +70,10 @@ makeSuite('AaveIncentivesController claimRewards tests', (testEnv) => {
     let amountToClaim = _amountToClaim;
     it(caseName, async () => {
       await increaseTime(100);
-      const { aaveIncentivesController, stakedAave, aDaiMock } = testEnv;
+      const { pegasysIncentivesController, stakedPegasys, aDaiMock } = testEnv;
 
-      const distributionEndTimestamp = await aaveIncentivesController.getDistributionEnd();
-      const userAddress = await aaveIncentivesController.signer.getAddress();
+      const distributionEndTimestamp = await pegasysIncentivesController.getDistributionEnd();
+      const userAddress = await pegasysIncentivesController.signer.getAddress();
 
       const underlyingAsset = aDaiMock.address;
       const stakedByUser = 22 * caseName.length;
@@ -81,28 +81,28 @@ makeSuite('AaveIncentivesController claimRewards tests', (testEnv) => {
 
       // update emissionPerSecond in advance to not affect user calculations
       if (emissionPerSecond) {
-        await aaveIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
+        await pegasysIncentivesController.configureAssets([underlyingAsset], [emissionPerSecond]);
       }
 
       const destinationAddress = to || userAddress;
 
-      const destinationAddressBalanceBefore = await stakedAave.balanceOf(destinationAddress);
+      const destinationAddressBalanceBefore = await stakedPegasys.balanceOf(destinationAddress);
       await aDaiMock.setUserBalanceAndSupply(stakedByUser, totalStaked);
       await aDaiMock.handleActionOnAic(userAddress, totalStaked, stakedByUser);
 
-      const unclaimedRewardsBefore = await aaveIncentivesController.getRewardsBalance(
+      const unclaimedRewardsBefore = await pegasysIncentivesController.getRewardsBalance(
         [underlyingAsset],
         userAddress
       );
       const userIndexBefore = await getUserIndex(
-        aaveIncentivesController,
+        pegasysIncentivesController,
         userAddress,
         underlyingAsset
       );
-      const assetDataBefore = (await getAssetsData(aaveIncentivesController, [underlyingAsset]))[0];
+      const assetDataBefore = (await getAssetsData(pegasysIncentivesController, [underlyingAsset]))[0];
 
       const claimRewardsReceipt = await waitForTx(
-        await aaveIncentivesController.claimRewards(
+        await pegasysIncentivesController.claimRewards(
           [underlyingAsset],
           amountToClaim,
           destinationAddress
@@ -113,18 +113,18 @@ makeSuite('AaveIncentivesController claimRewards tests', (testEnv) => {
       const actionBlockTimestamp = await getBlockTimestamp(claimRewardsReceipt.blockNumber);
 
       const userIndexAfter = await getUserIndex(
-        aaveIncentivesController,
+        pegasysIncentivesController,
         userAddress,
         underlyingAsset
       );
-      const assetDataAfter = (await getAssetsData(aaveIncentivesController, [underlyingAsset]))[0];
+      const assetDataAfter = (await getAssetsData(pegasysIncentivesController, [underlyingAsset]))[0];
 
-      const unclaimedRewardsAfter = await aaveIncentivesController.getRewardsBalance(
+      const unclaimedRewardsAfter = await pegasysIncentivesController.getRewardsBalance(
         [underlyingAsset],
         userAddress
       );
 
-      const destinationAddressBalanceAfter = await stakedAave.balanceOf(destinationAddress);
+      const destinationAddressBalanceAfter = await stakedPegasys.balanceOf(destinationAddress);
 
       const claimedAmount = destinationAddressBalanceAfter.sub(destinationAddressBalanceBefore);
 
